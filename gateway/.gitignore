@@ -1,0 +1,3 @@
+# real secrets only; the *.example templates are committed (see root .gitignore)
+.env
+.env.langfuse

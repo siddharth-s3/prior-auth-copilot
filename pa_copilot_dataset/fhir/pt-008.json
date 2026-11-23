@@ -1,0 +1,333 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-pt-008",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:1022b198-85b5-5100-b858-6da04bc8935e",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pt-008",
+        "identifier": [
+          {
+            "system": "urn:example:synthetic-pa/mrn",
+            "value": "SYN-008"
+          }
+        ],
+        "name": [
+          {
+            "family": "Castillo",
+            "given": [
+              "Andre"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1977-02-17"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pt-008"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:966784b6-0b94-5d83-b1e5-a1225467614f",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-008-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.50",
+              "display": "Low back pain, unspecified"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "onsetDateTime": "2026-03-02"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-008-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:15af803c-4d52-50d0-bb95-eb522fc6d537",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-008-e1",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "period": {
+          "start": "2026-03-10"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-008-e1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:5108dcc1-5359-54a3-9d7c-19d3920a7f08",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-008-e2",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Physical therapy (4 visits to date)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "period": {
+          "start": "2026-04-23",
+          "end": "2026-05-12"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-008-e2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e8bac751-2597-5cd2-aeeb-c7bdd89f5407",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-008-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-008-e1"
+        },
+        "effectiveDateTime": "2026-03-10",
+        "valueQuantity": {
+          "value": 6,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-008-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:b754dabf-796d-5297-b9bd-ed4548d6e78e",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-008-2",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "urn:example:synthetic-pa/obs",
+              "code": "slr_left",
+              "display": "Straight leg raise test, left leg"
+            }
+          ],
+          "text": "Straight leg raise test, left leg"
+        },
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-008-e1"
+        },
+        "effectiveDateTime": "2026-03-10",
+        "valueString": "negative"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-008-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:75cbd7f0-8e0b-51d7-8c39-6f6b7072f5b1",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-008-3",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-008-e2"
+        },
+        "effectiveDateTime": "2026-05-12",
+        "valueQuantity": {
+          "value": 5,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-008-3"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:aad05aa9-3b15-596a-8911-3cc74c81db2a",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-015",
+        "status": "current",
+        "type": {
+          "text": "Office visit note"
+        },
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "date": "2026-03-10",
+        "author": [
+          {
+            "display": "Dr. N. Hale (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-015.md",
+              "title": "Office visit note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-008-e1"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-015"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:b137078f-ec78-5e54-bcce-7b0bb07cdc8e",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-016",
+        "status": "current",
+        "type": {
+          "text": "Physical therapy progress note"
+        },
+        "subject": {
+          "reference": "Patient/pt-008"
+        },
+        "date": "2026-05-12",
+        "author": [
+          {
+            "display": "D. Brooks, PT"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-016.md",
+              "title": "Physical therapy progress note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-008-e2"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-016"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e841d9ec-2eb8-59dc-b352-12e4d5d8a2b7",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "cov-008",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/pt-008"
+        },
+        "payor": [
+          {
+            "display": "Synthetic Health Plan"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "code": "plan",
+                  "display": "Plan"
+                }
+              ]
+            },
+            "value": "PPO-GOLD"
+          }
+        ],
+        "period": {
+          "start": "2024-01-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/cov-008"
+      }
+    }
+  ]
+}

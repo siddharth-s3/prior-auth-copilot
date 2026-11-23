@@ -1,0 +1,11 @@
+name: copilotkit_ui
+services:
+  ui:
+    build: .
+    environment:
+      COPILOTKIT_TELEMETRY_DISABLED: "true"
+      AGUI_URL: http://host.docker.internal:8002/agui     # server side (inside the container)
+      NEXT_PUBLIC_API: http://localhost:8002              # browser -> adk-agui REST (case list/detail)
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    ports: ["3100:3100"]
+    restart: unless-stopped

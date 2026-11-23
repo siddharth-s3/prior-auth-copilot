@@ -1,0 +1,55 @@
+{
+  "policy_id": "POL-MRI-CS-2026-V1",
+  "family": "POL-MRI-CS",
+  "title": "Cervical Spine MRI",
+  "version": 1,
+  "effective_start": "2026-01-01",
+  "effective_end": null,
+  "plan_ids": [
+    "PPO-GOLD",
+    "HMO-SILVER",
+    "MA-PLUS"
+  ],
+  "supersedes": null,
+  "precedence": "GENERAL",
+  "service": {
+    "name": "MRI cervical spine",
+    "cpt_codes": [
+      "72141",
+      "72142",
+      "72156"
+    ]
+  },
+  "sections": {
+    "1": {
+      "title": "Scope and applicability",
+      "statements": [
+        "1.1 This policy applies to MRI of the cervical spine (CPT 72141, 72142, 72156) for adult members.",
+        "1.3 Governing date. The policy version in effect on the date the request is received governs."
+      ]
+    },
+    "2": {
+      "title": "Medical necessity criteria",
+      "criteria": [
+        {
+          "criterion_id": "C-01",
+          "text": "Neck pain or radiculopathy persisting at least 6 weeks despite conservative therapy."
+        },
+        {
+          "criterion_id": "C-02",
+          "text": "Neurological examination documented within 30 days before the request date."
+        },
+        {
+          "criterion_id": "C-03",
+          "text": "No cervical spine MRI or CT in the prior 12 months unless a new neurological deficit is documented."
+        }
+      ]
+    },
+    "3": {
+      "title": "Red flag pathway",
+      "statements": [
+        "3.1 Progressive motor deficit, myelopathy signs, suspected infection or malignancy waive C-01."
+      ]
+    }
+  }
+}

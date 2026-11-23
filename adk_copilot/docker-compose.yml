@@ -1,0 +1,39 @@
+services:
+  adk:
+    build: .
+    env_file: .env
+    environment:
+      QDRANT_MCP_URL: http://host.docker.internal:8100/mcp
+      SQLITE_MCP_URL: http://host.docker.internal:8101/mcp
+      MCP_GATEWAY_URL: http://host.docker.internal:4000/mcp
+      MEM0_URL: http://host.docker.internal:8200
+      OPENAI_API_BASE: http://host.docker.internal:4000
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  adk-a2a:
+    build: .
+    env_file: .env
+    command: ["adk", "api_server", "--a2a", "--host", "0.0.0.0", "--port", "8001", "/app/agents"]
+    environment:
+      MCP_GATEWAY_URL: http://host.docker.internal:4000/mcp
+      MEM0_URL: http://host.docker.internal:8200
+      OPENAI_API_BASE: http://host.docker.internal:4000
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
+  adk-agui:
+    build: .
+    env_file: .env
+    command: ["uvicorn", "agui_server:app", "--host", "0.0.0.0", "--port", "8002"]
+    environment:
+      MCP_GATEWAY_URL: http://host.docker.internal:4000/mcp
+      SQLITE_MCP_URL: http://host.docker.internal:8101/mcp
+      MEM0_URL: http://host.docker.internal:8200
+      OPENAI_API_BASE: http://host.docker.internal:4000
+      AGENT_LLM_MODEL: openai/preauth-gemini   # Gemini-only group (A2UI tool calling)
+    ports:
+      - "8002:8002"
+    restart: unless-stopped

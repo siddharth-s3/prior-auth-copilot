@@ -1,0 +1,300 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-pt-012",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:73e5e0d8-2a05-55be-980c-2c87823bd3ad",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pt-012",
+        "identifier": [
+          {
+            "system": "urn:example:synthetic-pa/mrn",
+            "value": "SYN-012"
+          }
+        ],
+        "name": [
+          {
+            "family": "Lam",
+            "given": [
+              "Mei"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1981-11-30"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pt-012"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:b3b41634-786c-53f9-989f-db3785249562",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-012-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.50",
+              "display": "Low back pain, unspecified"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-012"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-012-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:326c12fd-8d3b-58a9-b2eb-2a41af80f534",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-012-e1",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-012"
+        },
+        "period": {
+          "start": "2026-07-10"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-012-e1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:8fe9594f-18c8-544b-ae15-039568030c28",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-012-e2",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Physical therapy (12 visits)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-012"
+        },
+        "period": {
+          "start": "2026-05-09",
+          "end": "2026-06-20"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-012-e2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:d7072989-8a44-5975-a648-506311a62b62",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-012-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-012"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-012-e1"
+        },
+        "effectiveDateTime": "2026-07-10",
+        "valueQuantity": {
+          "value": 5,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-012-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:b7992f98-529a-5904-b856-6b4e70ada242",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-012-2",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "urn:example:synthetic-pa/obs",
+              "code": "slr_left",
+              "display": "Straight leg raise test, left leg"
+            }
+          ],
+          "text": "Straight leg raise test, left leg"
+        },
+        "subject": {
+          "reference": "Patient/pt-012"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-012-e1"
+        },
+        "effectiveDateTime": "2026-07-10",
+        "valueString": "negative"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-012-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:69476e99-7ffd-5cae-9b5e-21ae9340c101",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-022",
+        "status": "current",
+        "type": {
+          "text": "Office visit note"
+        },
+        "subject": {
+          "reference": "Patient/pt-012"
+        },
+        "date": "2026-07-10",
+        "author": [
+          {
+            "display": "Dr. P. Hargrove (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-022.md",
+              "title": "Office visit note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-012-e1"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-022"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:3a94f3d7-7eb6-5d08-a2c7-017afcd8a5e7",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-023",
+        "status": "current",
+        "type": {
+          "text": "Physical therapy summary"
+        },
+        "subject": {
+          "reference": "Patient/pt-012"
+        },
+        "date": "2026-06-20",
+        "author": [
+          {
+            "display": "D. Brooks, PT"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-023.md",
+              "title": "Physical therapy summary"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-012-e2"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-023"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:2669f086-5a71-5878-925a-c4e70f800130",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "cov-012",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/pt-012"
+        },
+        "payor": [
+          {
+            "display": "Synthetic Health Plan"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "code": "plan",
+                  "display": "Plan"
+                }
+              ]
+            },
+            "value": "PPO-GOLD"
+          }
+        ],
+        "period": {
+          "start": "2024-01-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/cov-012"
+      }
+    }
+  ]
+}

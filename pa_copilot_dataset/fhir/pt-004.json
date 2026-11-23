@@ -1,0 +1,300 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-pt-004",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:296675be-8098-570b-8be6-9d8ece35760c",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pt-004",
+        "identifier": [
+          {
+            "system": "urn:example:synthetic-pa/mrn",
+            "value": "SYN-004"
+          }
+        ],
+        "name": [
+          {
+            "family": "Tran",
+            "given": [
+              "Samuel"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1988-04-09"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pt-004"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:43102586-218a-5572-98ba-cc166eb318d7",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-004-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.16",
+              "display": "Radiculopathy, lumbar region"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-004"
+        },
+        "onsetDateTime": "2026-06-20"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-004-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:b0d17f46-af9d-5280-9bca-2e764c3b9310",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-004-e1",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-004"
+        },
+        "period": {
+          "start": "2026-08-28"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-004-e1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:aa4fb1c9-98cc-5019-a06e-ceaed062766d",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-004-e2",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Referral to physical therapy"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-004"
+        },
+        "period": {
+          "start": "2026-07-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-004-e2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:15ef7e9f-39ba-54ae-b6ea-a10a64414fb2",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-004-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-004"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-004-e1"
+        },
+        "effectiveDateTime": "2026-08-28",
+        "valueQuantity": {
+          "value": 6,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-004-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:49d4a885-2cef-5d94-89e9-e720d78a57ef",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-004-2",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "urn:example:synthetic-pa/obs",
+              "code": "slr_right",
+              "display": "Straight leg raise test, right leg"
+            }
+          ],
+          "text": "Straight leg raise test, right leg"
+        },
+        "subject": {
+          "reference": "Patient/pt-004"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-004-e1"
+        },
+        "effectiveDateTime": "2026-08-28",
+        "valueString": "positive at 60 degrees"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-004-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:dd2ad9a3-6a83-5184-bbb4-8b41d2da66c6",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-008",
+        "status": "current",
+        "type": {
+          "text": "Office visit note"
+        },
+        "subject": {
+          "reference": "Patient/pt-004"
+        },
+        "date": "2026-08-28",
+        "author": [
+          {
+            "display": "Dr. K. Anand (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-008.md",
+              "title": "Office visit note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-004-e1"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-008"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:5f975504-4512-5047-b926-dbf39fcdfd77",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-009",
+        "status": "current",
+        "type": {
+          "text": "Referral note"
+        },
+        "subject": {
+          "reference": "Patient/pt-004"
+        },
+        "date": "2026-07-01",
+        "author": [
+          {
+            "display": "Dr. K. Anand (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-009.md",
+              "title": "Referral note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-004-e2"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-009"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:cdf66fef-2db9-5375-877b-b86bdc67b49f",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "cov-004",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/pt-004"
+        },
+        "payor": [
+          {
+            "display": "Synthetic Health Plan"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "code": "plan",
+                  "display": "Plan"
+                }
+              ]
+            },
+            "value": "PPO-GOLD"
+          }
+        ],
+        "period": {
+          "start": "2025-01-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/cov-004"
+      }
+    }
+  ]
+}

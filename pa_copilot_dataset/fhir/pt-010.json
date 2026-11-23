@@ -1,0 +1,232 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-pt-010",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:c9bb7a7b-0bc2-5a44-b588-25aac08e8103",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pt-010",
+        "identifier": [
+          {
+            "system": "urn:example:synthetic-pa/mrn",
+            "value": "SYN-010"
+          }
+        ],
+        "name": [
+          {
+            "family": "Natarajan",
+            "given": [
+              "Priya"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1992-08-14"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pt-010"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:966a34b0-d89c-5a49-aa42-00d0bfc5b01b",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-010-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.50",
+              "display": "Low back pain, unspecified"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-010"
+        },
+        "onsetDateTime": "2026-08-06"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-010-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:2466ecc8-57f5-5572-bda1-98fd4421f531",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-010-e1",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-010"
+        },
+        "period": {
+          "start": "2026-08-17"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-010-e1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:4ce7c12d-a9b8-5d91-929b-a2cf18853376",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-010-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-010"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-010-e1"
+        },
+        "effectiveDateTime": "2026-08-17",
+        "valueQuantity": {
+          "value": 6,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-010-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:799c4d4c-a649-5467-86c0-791b673456da",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-010-2",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "urn:example:synthetic-pa/obs",
+              "code": "slr_left",
+              "display": "Straight leg raise test, left leg"
+            }
+          ],
+          "text": "Straight leg raise test, left leg"
+        },
+        "subject": {
+          "reference": "Patient/pt-010"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-010-e1"
+        },
+        "effectiveDateTime": "2026-08-17",
+        "valueString": "negative"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-010-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:ad1dde26-dd8d-58e9-9375-ffef8fc0af92",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-018",
+        "status": "current",
+        "type": {
+          "text": "Office visit note"
+        },
+        "subject": {
+          "reference": "Patient/pt-010"
+        },
+        "date": "2026-08-17",
+        "author": [
+          {
+            "display": "Dr. T. Okafor (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-018.md",
+              "title": "Office visit note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-010-e1"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-018"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:9dcb7515-e6aa-57fb-9daf-32da5a4c2f7c",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "cov-010",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/pt-010"
+        },
+        "payor": [
+          {
+            "display": "Synthetic Health Plan"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "code": "plan",
+                  "display": "Plan"
+                }
+              ]
+            },
+            "value": "HMO-SILVER"
+          }
+        ],
+        "period": {
+          "start": "2025-01-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/cov-010"
+      }
+    }
+  ]
+}

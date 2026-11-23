@@ -1,0 +1,301 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-pt-005",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:59e3e25d-9704-5fed-81ef-bcbc503a1712",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pt-005",
+        "identifier": [
+          {
+            "system": "urn:example:synthetic-pa/mrn",
+            "value": "SYN-005"
+          }
+        ],
+        "name": [
+          {
+            "family": "Lindqvist",
+            "given": [
+              "Hannah"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1979-02-11"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pt-005"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:67edefd1-702c-593f-b30f-2c9d5850ad35",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-005-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.50",
+              "display": "Low back pain, unspecified"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-005"
+        },
+        "onsetDateTime": "2026-09-21"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-005-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:eb9dc26a-9003-58a0-b770-0f706e5e2c6c",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-005-e1",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-005"
+        },
+        "period": {
+          "start": "2026-10-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-005-e1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:6b0cabda-556a-59c6-8ef9-1c61d4c55cd9",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-005-e2",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Outside fax addendum"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-005"
+        },
+        "period": {
+          "start": "2026-10-02"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-005-e2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:89a9f281-f047-5a4f-97c7-4d20df950e93",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-005-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-005"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-005-e1"
+        },
+        "effectiveDateTime": "2026-10-01",
+        "valueQuantity": {
+          "value": 5,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-005-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:446f5f10-5a9d-5d95-940f-692cac864a98",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-005-2",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "urn:example:synthetic-pa/obs",
+              "code": "slr_left",
+              "display": "Straight leg raise test, left leg"
+            }
+          ],
+          "text": "Straight leg raise test, left leg"
+        },
+        "subject": {
+          "reference": "Patient/pt-005"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-005-e1"
+        },
+        "effectiveDateTime": "2026-10-01",
+        "valueString": "negative"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-005-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:c810eae5-ab6d-586a-8c7d-fd5c7a67b48e",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-010",
+        "status": "current",
+        "type": {
+          "text": "Office visit note"
+        },
+        "subject": {
+          "reference": "Patient/pt-005"
+        },
+        "date": "2026-10-01",
+        "author": [
+          {
+            "display": "Dr. J. Whitfield (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-010.md",
+              "title": "Office visit note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-005-e1"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-010"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:6f5c3c6e-484c-5fc1-9f2c-ca7d01a2e209",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-011",
+        "status": "current",
+        "type": {
+          "text": "Scanned fax addendum (OCR)"
+        },
+        "subject": {
+          "reference": "Patient/pt-005"
+        },
+        "date": "2026-10-02",
+        "author": [
+          {
+            "display": "Unknown sender"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-011.md",
+              "title": "Scanned fax addendum (OCR)"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-005-e2"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-011"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:0f355095-8284-5d2f-b48c-496b030042e2",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "cov-005",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/pt-005"
+        },
+        "payor": [
+          {
+            "display": "Synthetic Health Plan"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "code": "plan",
+                  "display": "Plan"
+                }
+              ]
+            },
+            "value": "HMO-SILVER"
+          }
+        ],
+        "period": {
+          "start": "2025-01-01",
+          "end": "2026-12-31"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/cov-005"
+      }
+    }
+  ]
+}

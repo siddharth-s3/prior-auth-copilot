@@ -1,0 +1,273 @@
+{
+  "as_of": "2026-11-20",
+  "policies": [
+    {
+      "policy_id": "POL-MRI-2024-V1",
+      "family": "POL-MRI",
+      "title": "Lumbar Spine MRI",
+      "service": {
+        "name": "MRI lumbar spine",
+        "cpt_codes": [
+          "72148",
+          "72149",
+          "72158"
+        ]
+      },
+      "plan_ids": [
+        "PPO-GOLD",
+        "HMO-SILVER"
+      ],
+      "version": 1,
+      "effective_start": "2024-01-01",
+      "effective_end": "2025-06-30",
+      "supersedes": null,
+      "status_as_of_2026-11-20": "SUPERSEDED",
+      "precedence": "GENERAL",
+      "source_file": "policies/POL-MRI-2024-V1.md",
+      "format": "markdown",
+      "criteria": [
+        {
+          "criterion_id": "C-01",
+          "section_ref": "POL-MRI-2024-V1#2",
+          "requirement": "Low back pain has persisted for at least 4 weeks (28 days), with the onset date documented.",
+          "min_duration_days": 28
+        },
+        {
+          "criterion_id": "C-02",
+          "section_ref": "POL-MRI-2024-V1#2",
+          "requirement": "At least 4 weeks of conservative therapy (physical therapy, home exercise program, and/or NSAIDs or analgesics).",
+          "min_duration_days": 28
+        },
+        {
+          "criterion_id": "C-03",
+          "section_ref": "POL-MRI-2024-V1#2",
+          "requirement": "A clinical examination (musculoskeletal and neurological) by the treating clinician is documented within 90 days before the request date.",
+          "max_exam_age_days": 90
+        }
+      ],
+      "red_flag_pathway": {
+        "id": "RF-01",
+        "waives": [
+          "C-01",
+          "C-02"
+        ],
+        "section_ref": "POL-MRI-2024-V1#3"
+      },
+      "exception_ids": []
+    },
+    {
+      "policy_id": "POL-MRI-2025-V2",
+      "family": "POL-MRI",
+      "title": "Lumbar Spine MRI",
+      "service": {
+        "name": "MRI lumbar spine",
+        "cpt_codes": [
+          "72148",
+          "72149",
+          "72158"
+        ]
+      },
+      "plan_ids": [
+        "PPO-GOLD",
+        "HMO-SILVER"
+      ],
+      "version": 2,
+      "effective_start": "2025-07-01",
+      "effective_end": "2026-03-31",
+      "supersedes": "POL-MRI-2024-V1",
+      "status_as_of_2026-11-20": "SUPERSEDED",
+      "precedence": "GENERAL",
+      "source_file": "policies/POL-MRI-2025-V2.md",
+      "format": "markdown",
+      "criteria": [
+        {
+          "criterion_id": "C-01",
+          "section_ref": "POL-MRI-2025-V2#2",
+          "requirement": "Low back pain has persisted for at least 6 weeks (42 days), with the onset date documented.",
+          "min_duration_days": 42
+        },
+        {
+          "criterion_id": "C-02",
+          "section_ref": "POL-MRI-2025-V2#2",
+          "requirement": "At least 6 weeks of conservative therapy (physical therapy, home exercise program, and/or NSAIDs or analgesics).",
+          "min_duration_days": 42
+        },
+        {
+          "criterion_id": "C-03",
+          "section_ref": "POL-MRI-2025-V2#2",
+          "requirement": "A clinical examination (musculoskeletal and neurological) by the treating clinician is documented within 60 days before the request date.",
+          "max_exam_age_days": 60
+        },
+        {
+          "criterion_id": "C-04",
+          "section_ref": "POL-MRI-2025-V2#2",
+          "requirement": "No lumbar spine MRI or CT was performed in the prior 12 months, unless a new or progressive neurological deficit has been documented since that imaging.",
+          "imaging_lookback_days": 365
+        }
+      ],
+      "red_flag_pathway": {
+        "id": "RF-01",
+        "waives": [
+          "C-01",
+          "C-02"
+        ],
+        "section_ref": "POL-MRI-2025-V2#3"
+      },
+      "exception_ids": [
+        "EXC-003"
+      ]
+    },
+    {
+      "policy_id": "POL-MRI-2026-V3",
+      "family": "POL-MRI",
+      "title": "Lumbar Spine MRI",
+      "service": {
+        "name": "MRI lumbar spine",
+        "cpt_codes": [
+          "72148",
+          "72149",
+          "72158"
+        ]
+      },
+      "plan_ids": [
+        "PPO-GOLD",
+        "HMO-SILVER",
+        "MA-PLUS"
+      ],
+      "version": 3,
+      "effective_start": "2026-04-01",
+      "effective_end": null,
+      "supersedes": "POL-MRI-2025-V2",
+      "status_as_of_2026-11-20": "ACTIVE",
+      "precedence": "GENERAL",
+      "source_file": "policies/POL-MRI-2026-V3.md",
+      "format": "markdown",
+      "criteria": [
+        {
+          "criterion_id": "C-01",
+          "section_ref": "POL-MRI-2026-V3#2",
+          "requirement": "Low back pain has persisted for at least 6 weeks (42 days), with the onset date documented.",
+          "min_duration_days": 42
+        },
+        {
+          "criterion_id": "C-02",
+          "section_ref": "POL-MRI-2026-V3#2",
+          "requirement": "At least 6 weeks of conservative therapy (supervised physical therapy, a documented home exercise program, and/or NSAIDs or analgesics). Therapy type, start date, and total duration MUST be documented.",
+          "min_duration_days": 42
+        },
+        {
+          "criterion_id": "C-03",
+          "section_ref": "POL-MRI-2026-V3#2",
+          "requirement": "A clinical examination (musculoskeletal and neurological) by the treating clinician is documented within 30 days before the request date.",
+          "max_exam_age_days": 30
+        },
+        {
+          "criterion_id": "C-04",
+          "section_ref": "POL-MRI-2026-V3#2",
+          "requirement": "No lumbar spine MRI or CT was performed in the prior 12 months, unless a new or progressive neurological deficit has been documented since that imaging.",
+          "imaging_lookback_days": 365
+        }
+      ],
+      "red_flag_pathway": {
+        "id": "RF-01",
+        "waives": [
+          "C-01",
+          "C-02"
+        ],
+        "section_ref": "POL-MRI-2026-V3#3"
+      },
+      "exception_ids": [
+        "EXC-001",
+        "EXC-002"
+      ]
+    },
+    {
+      "policy_id": "POL-MRI-MA-2026-V1",
+      "family": "POL-MRI-MA",
+      "title": "Lumbar Spine MRI",
+      "service": {
+        "name": "MRI lumbar spine",
+        "cpt_codes": [
+          "72148",
+          "72149",
+          "72158"
+        ]
+      },
+      "plan_ids": [
+        "MA-PLUS"
+      ],
+      "version": 1,
+      "effective_start": "2026-01-01",
+      "effective_end": null,
+      "supersedes": null,
+      "status_as_of_2026-11-20": "ACTIVE",
+      "precedence": "PLAN_SPECIFIC",
+      "source_file": "policies/POL-MRI-MA-2026-V1.json",
+      "format": "json",
+      "criteria": [
+        {
+          "criterion_id": "C-01",
+          "section_ref": "POL-MRI-MA-2026-V1#2",
+          "requirement": "Low back pain has persisted for at least 4 weeks (28 days), with the onset date documented.",
+          "min_duration_days": 28
+        },
+        {
+          "criterion_id": "C-02",
+          "section_ref": "POL-MRI-MA-2026-V1#2",
+          "requirement": "At least 4 weeks of conservative therapy (physical therapy, home exercise program, and/or NSAIDs or analgesics).",
+          "min_duration_days": 28
+        },
+        {
+          "criterion_id": "C-03",
+          "section_ref": "POL-MRI-MA-2026-V1#2",
+          "requirement": "A clinical examination (musculoskeletal and neurological) by the treating clinician is documented within 30 days before the request date.",
+          "max_exam_age_days": 30
+        },
+        {
+          "criterion_id": "C-04",
+          "section_ref": "POL-MRI-MA-2026-V1#2",
+          "requirement": "No lumbar spine MRI or CT was performed in the prior 12 months, unless a new or progressive neurological deficit has been documented since that imaging.",
+          "imaging_lookback_days": 365
+        }
+      ],
+      "red_flag_pathway": {
+        "id": "RF-01",
+        "waives": [
+          "C-01",
+          "C-02"
+        ],
+        "section_ref": "POL-MRI-MA-2026-V1#3"
+      },
+      "exception_ids": []
+    },
+    {
+      "policy_id": "POL-MRI-CS-2026-V1",
+      "family": "POL-MRI-CS",
+      "title": "Cervical Spine MRI",
+      "service": {
+        "name": "MRI cervical spine",
+        "cpt_codes": [
+          "72141",
+          "72142",
+          "72156"
+        ]
+      },
+      "plan_ids": [
+        "PPO-GOLD",
+        "HMO-SILVER",
+        "MA-PLUS"
+      ],
+      "version": 1,
+      "effective_start": "2026-01-01",
+      "effective_end": null,
+      "supersedes": null,
+      "status_as_of_2026-11-20": "ACTIVE",
+      "precedence": "GENERAL",
+      "source_file": "policies/POL-MRI-CS-2026-V1.json",
+      "format": "json",
+      "criteria": [],
+      "exception_ids": [],
+      "note": "Distractor policy: wrong service. Must be filtered out for lumbar requests."
+    }
+  ]
+}

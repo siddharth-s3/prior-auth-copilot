@@ -1,0 +1,43 @@
+services:
+  ingestion:
+    build: .
+    env_file: .env
+    environment:
+      QDRANT_URL: http://host.docker.internal:6333
+      WATCH_POLICIES: /watch/policies
+      WATCH_NOTES: /watch/notes
+      LOG_DIR: /app/log
+      PARSED_DIR: /app/parsed
+      STATE_FILE: /app/state/ingestion_state.json
+    volumes:
+      - ../pa_copilot_dataset/policies:/watch/policies:ro
+      - ../pa_copilot_dataset/notes:/watch/notes:ro
+      - ./log:/app/log
+      - ./parsed:/app/parsed
+      - ./state:/app/state
+    restart: unless-stopped
+
+  mcp:
+    build:
+      context: .
+      dockerfile: mcp/Dockerfile
+    env_file: .env
+    environment:
+      QDRANT_URL: http://host.docker.internal:6333
+      EMBEDDING_MODEL: gemini-embedding-2
+    ports:
+      - "8100:8000"
+    restart: unless-stopped
+
+  mcp_sqlite:
+    build:
+      context: .
+      dockerfile: mcp_sqlite/Dockerfile
+    env_file: .env
+    environment:
+      DB_PATH: /db/pa_copilot.db
+    volumes:
+      - ../pa_copilot_dataset/pa_copilot.db:/db/pa_copilot.db:ro
+    ports:
+      - "8101:8000"
+    restart: unless-stopped

@@ -1,0 +1,13 @@
+{
+  "name": "preauth",
+  "description": "Prior authorization review copilot: supervisor + clinical evidence, policy/RAG, coverage/eligibility, criteria/quality agents. Reviews synthetic PA cases and returns cited, human-reviewable recommendations.",
+  "url": "http://localhost:8001/a2a/preauth",
+  "version": "1.0.0",
+  "capabilities": {"streaming": false},
+  "defaultInputModes": ["text"],
+  "defaultOutputModes": ["text"],
+  "skills": [
+    {"id": "review_case", "name": "Review PA case", "description": "Run the full multi-agent review for a case id (e.g. PA-001) and return the cited recommendation.", "tags": ["prior-auth", "review"]},
+    {"id": "list_cases", "name": "List cases", "description": "List all prior-auth cases with patient/plan/scenario.", "tags": ["prior-auth", "cases"]}
+  ]
+}

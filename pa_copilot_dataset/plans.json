@@ -1,0 +1,17 @@
+[
+  {
+    "plan_id": "PPO-GOLD",
+    "name": "Gold PPO",
+    "type": "commercial"
+  },
+  {
+    "plan_id": "HMO-SILVER",
+    "name": "Silver HMO",
+    "type": "commercial"
+  },
+  {
+    "plan_id": "MA-PLUS",
+    "name": "Medicare Advantage Plus",
+    "type": "medicare_advantage"
+  }
+]

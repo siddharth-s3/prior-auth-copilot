@@ -1,0 +1,29 @@
+# secrets / local state - never commit
+.env
+.env.*
+!.env.example
+!.env.langfuse.example
+# TLS-intercepting proxy CA certs are per-user
+**/certs/*.pem
+**/certs/*.crt
+# generated / runtime
+.setup/
+.DS_Store
+**/node_modules/
+**/.next/
+**/.venv/
+**/__pycache__/
+ingestion_retriever/log/
+ingestion_retriever/parsed/
+ingestion_retriever/state/
+gateway/lens/.env
+
+# diagram generator script stays local (the .drawio and .png outputs are committed)
+docs/architecture/build_architecture_diagram.py
+
+# third-party Synthea clone (only needed to rebuild sample data; see README)
+synthea/
+
+# per-folder READMEs kept local only
+adk_copilot/README.md
+pa_copilot_dataset/README.md

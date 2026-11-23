@@ -1,0 +1,53 @@
+[
+  {
+    "exception_id": "EXC-001",
+    "title": "Post-surgical exception",
+    "policy_ids": [
+      "POL-MRI-2026-V3"
+    ],
+    "valid_from": "2026-04-01",
+    "valid_to": "2026-12-31",
+    "section_ref": "POL-MRI-2026-V3#5.1",
+    "condition": "Lumbar spine surgery within the prior 12 months with new or worsening symptoms.",
+    "effect": {
+      "waives": [
+        "C-01",
+        "C-02"
+      ]
+    }
+  },
+  {
+    "exception_id": "EXC-002",
+    "title": "Oncology history exception",
+    "policy_ids": [
+      "POL-MRI-2026-V3"
+    ],
+    "valid_from": "2026-04-01",
+    "valid_to": null,
+    "section_ref": "POL-MRI-2026-V3#5.2",
+    "condition": "Documented history of malignancy within the prior 5 years and new back pain.",
+    "effect": {
+      "waives": [
+        "C-01",
+        "C-02"
+      ]
+    }
+  },
+  {
+    "exception_id": "EXC-003",
+    "title": "Back Care Pilot exception (EXPIRED)",
+    "policy_ids": [
+      "POL-MRI-2024-V1",
+      "POL-MRI-2025-V2"
+    ],
+    "valid_from": "2025-01-01",
+    "valid_to": "2025-12-31",
+    "section_ref": "POL-MRI-2025-V2#5.1",
+    "condition": "Member enrolled in the 2025 Back Care Pilot.",
+    "effect": {
+      "min_duration_days_override": {
+        "C-02": 21
+      }
+    }
+  }
+]

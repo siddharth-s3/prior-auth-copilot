@@ -1,0 +1,16 @@
+# mem0 long-term memory service (own container). Vectors in the existing Qdrant (:6333),
+# LLM + embeddings through the LiteLLM gateway (:4000).
+name: mem0
+services:
+  mem0:
+    build: .
+    env_file: .env
+    ports:
+      - "8200:8200"
+    volumes:
+      - mem0_data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+volumes:
+  mem0_data:

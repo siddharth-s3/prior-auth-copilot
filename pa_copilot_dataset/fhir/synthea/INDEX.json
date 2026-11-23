@@ -1,0 +1,198 @@
+{
+  "synthea_seed": 20261120,
+  "count": 26,
+  "history_cutoff": "2024-01-01",
+  "slimmed": [
+    "CoverageEligibilityRequest",
+    "Device",
+    "ExplanationOfBenefit",
+    "ImagingStudy",
+    "Media",
+    "Provenance",
+    "SupplyDelivery"
+  ],
+  "bundles": [
+    {
+      "file": "synthea-pt-001.json",
+      "source": "Agnus790_Madison727_Kunze215_956abe94-e18e-537e-9c3c-436cf9e4a30e.json",
+      "entries": 1072,
+      "conditions": 28,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-002.json",
+      "source": "Amberly552_Starla601_Johns824_575f4966-8501-f82d-7281-fe12450168d9.json",
+      "entries": 155,
+      "conditions": 9,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-003.json",
+      "source": "Carlos172_Arag\u00f3n562_4fef44be-f0f1-c449-00b1-72e5d9e26113.json",
+      "entries": 105,
+      "conditions": 9,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-004.json",
+      "source": "Caroll955_Oliva247_Hettinger594_f6c83f7f-9d78-9cb4-ff7c-f739a2b57496.json",
+      "entries": 172,
+      "conditions": 5,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-005.json",
+      "source": "Dalia295_Kirlin939_4901e187-4eaa-c897-ac0f-1e4507ff242c.json",
+      "entries": 197,
+      "conditions": 6,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-006.json",
+      "source": "Elicia233_Verna758_Hintz995_b0d44c70-0ac9-9911-e4f2-8b1e9b629fc4.json",
+      "entries": 282,
+      "conditions": 7,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-007.json",
+      "source": "Fanny438_Alanna27_Reichert620_50e97349-542d-baae-454f-d60c4f9e26ec.json",
+      "entries": 96,
+      "conditions": 5,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-008.json",
+      "source": "Felipe97_Zieme486_80ca85ab-37c3-244f-3098-28639c62e132.json",
+      "entries": 651,
+      "conditions": 7,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-009.json",
+      "source": "Florinda19_Ardis509_Hayes766_af2fd700-915e-2710-eff8-29caf42eb3a7.json",
+      "entries": 173,
+      "conditions": 6,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-010.json",
+      "source": "Laurence43_D'Amore443_d96d7379-53f2-acbf-b4b3-22cebb457769.json",
+      "entries": 136,
+      "conditions": 6,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-011.json",
+      "source": "Nathan164_Heller342_849fbce8-6e0b-aa44-e283-f31dd347f501.json",
+      "entries": 138,
+      "conditions": 10,
+      "back_related_in_full_record": true
+    },
+    {
+      "file": "synthea-pt-012.json",
+      "source": "Al123_Lynch190_6a016d1b-bd32-2a81-cc63-4e09ea2621a7.json",
+      "entries": 95,
+      "conditions": 10,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-013.json",
+      "source": "Antonia30_Abshire638_917a6102-df9d-5910-b27a-76a930447796.json",
+      "entries": 139,
+      "conditions": 6,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-014.json",
+      "source": "Benito209_Funk324_35c1a6ff-db03-42ce-4fce-5101e6410e2d.json",
+      "entries": 96,
+      "conditions": 2,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-015.json",
+      "source": "Bennett146_O'Keefe54_c4697750-e2cb-6032-28f1-6d46e3ee5768.json",
+      "entries": 74,
+      "conditions": 6,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-016.json",
+      "source": "Brain142_Swaniawski813_78832b3a-8d30-b693-7a8c-3c4d42c2e06c.json",
+      "entries": 42,
+      "conditions": 0,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-017.json",
+      "source": "Caridad510_Alejandra902_Badillo851_7e4e8962-305d-966e-24a0-49a627c98d83.json",
+      "entries": 117,
+      "conditions": 10,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-018.json",
+      "source": "Chad48_Reynolds644_84dd0ed2-437f-ed07-9dfd-7bc8cd5ddb7e.json",
+      "entries": 95,
+      "conditions": 10,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-019.json",
+      "source": "Edgar153_Lemke654_d2d746b4-184e-486c-e006-5341f97d049e.json",
+      "entries": 199,
+      "conditions": 13,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-020.json",
+      "source": "Elijah719_Rutherford999_878fef5e-c798-76f1-6b75-e49e161fe0d1.json",
+      "entries": 248,
+      "conditions": 6,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-021.json",
+      "source": "Ernesto186_Candelaria844_b567c7a9-3270-3f8b-7760-9cdddd4a3f43.json",
+      "entries": 139,
+      "conditions": 9,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-022.json",
+      "source": "Flo729_Jacalyn740_Stracke611_a68b38bd-ae91-4d4d-032d-00060bef9bfa.json",
+      "entries": 129,
+      "conditions": 6,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-023.json",
+      "source": "Ira784_Heller342_925843d1-3c86-b26c-1a74-46efdbc3dcb5.json",
+      "entries": 202,
+      "conditions": 11,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-024.json",
+      "source": "Jude172_Greenfelder433_2676c005-28ee-1c74-0175-e255ac793920.json",
+      "entries": 752,
+      "conditions": 20,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-025.json",
+      "source": "Keva141_Tina856_Ruecker817_2af5872b-8eb7-26f3-2b02-3df2ca742a83.json",
+      "entries": 207,
+      "conditions": 4,
+      "back_related_in_full_record": false
+    },
+    {
+      "file": "synthea-pt-026.json",
+      "source": "Kris249_Mayert710_4cc7b46a-1633-8193-4a1d-021e2dd0d0b4.json",
+      "entries": 118,
+      "conditions": 12,
+      "back_related_in_full_record": false
+    }
+  ]
+}

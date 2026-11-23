@@ -1,0 +1,85 @@
+{
+  "policy_id": "POL-MRI-MA-2026-V1",
+  "family": "POL-MRI-MA",
+  "title": "Lumbar Spine MRI - Medicare Advantage Plus",
+  "version": 1,
+  "effective_start": "2026-01-01",
+  "effective_end": null,
+  "plan_ids": [
+    "MA-PLUS"
+  ],
+  "supersedes": null,
+  "precedence": "PLAN_SPECIFIC",
+  "service": {
+    "name": "MRI lumbar spine",
+    "cpt_codes": [
+      "72148",
+      "72149",
+      "72158"
+    ]
+  },
+  "sections": {
+    "1": {
+      "title": "Scope and applicability",
+      "statements": [
+        "1.1 This policy applies to MRI of the lumbar spine (CPT 72148, 72149, 72158) for adult members.",
+        "1.2 Applicable plans: MA-PLUS.",
+        "1.3 Governing date. The policy version in effect on the date the authorization request is received governs the review, regardless of the scheduled service date.",
+        "1.4 Precedence. This plan-specific policy takes precedence over the general lumbar spine MRI policy for Medicare Advantage Plus members."
+      ]
+    },
+    "2": {
+      "title": "Medical necessity criteria",
+      "note": "All of the following must be met unless the red flag pathway (Section 3) or an exception (Section 5) applies.",
+      "criteria": [
+        {
+          "criterion_id": "C-01",
+          "text": "Low back pain has persisted for at least 4 weeks (28 days), with the onset date documented."
+        },
+        {
+          "criterion_id": "C-02",
+          "text": "At least 4 weeks of conservative therapy (physical therapy, home exercise program, and/or NSAIDs or analgesics)."
+        },
+        {
+          "criterion_id": "C-03",
+          "text": "A clinical examination (musculoskeletal and neurological) by the treating clinician is documented within 30 days before the request date."
+        },
+        {
+          "criterion_id": "C-04",
+          "text": "No lumbar spine MRI or CT was performed in the prior 12 months, unless a new or progressive neurological deficit has been documented since that imaging."
+        }
+      ]
+    },
+    "3": {
+      "title": "Red flag pathway",
+      "statements": [
+        "3.1 RF-01. Any of: new or progressive motor deficit, suspected cauda equina syndrome, suspected spinal infection, or suspected malignancy. When RF-01 is documented, C-01 and C-02 are waived. C-03 still applies."
+      ]
+    },
+    "4": {
+      "title": "Exclusions",
+      "statements": [
+        "4.1 EX-01. Routine imaging for non-specific low back pain without red flags before the minimum symptom and treatment durations are met.",
+        "4.2 EX-02. Imaging requested solely at patient request without clinical indication."
+      ]
+    },
+    "5": {
+      "title": "Exceptions",
+      "statements": [
+        "5.1 No exceptions are defined in this version."
+      ]
+    },
+    "6": {
+      "title": "Rationale",
+      "statements": [
+        "6.1 MRI is indicated when persistent low back pain has not responded to conservative treatment, or when red flags are present."
+      ]
+    },
+    "7": {
+      "title": "Document history",
+      "statements": [
+        "7.1 Version 1 effective 2026-01-01."
+      ]
+    }
+  }
+}

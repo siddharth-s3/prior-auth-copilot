@@ -1,0 +1,197 @@
+// Prior Authorization Copilot - pa_copilot.db
+// Paste into https://dbdiagram.io/d (New Diagram). Layout tips are at the bottom of this file.
+//
+// Structure: five TableGroups (Reference, Patient_and_Clinical, Clinical_Documents, Policy, PA_Workflow).
+// dbdiagram.io lays each group out as its own cluster, so the many patient_id / plan_id foreign keys stay
+// inside or between a few boxes instead of criss-crossing one big grid. Header colour = group.
+
+Project pa_copilot {
+  database_type: 'SQLite'
+  Note: 'Synthetic PA dataset. Source: generate_dataset.py -> build_sqlite.py'
+}
+
+// ================= Reference =================
+Table plans [headercolor: #6B7280] {
+  plan_id text [pk]
+  name text [not null]
+  type text // commercial | medicare_advantage
+}
+
+// ================= Patient and Clinical =================
+Table patients [headercolor: #2563EB] {
+  patient_id text [pk, note: 'pt-001 .. pt-016']
+  mrn text
+  given_name text
+  family_name text
+  gender text
+  birth_date text
+}
+
+Table coverage [headercolor: #2563EB] {
+  coverage_id text [pk, note: 'cov-NNN']
+  patient_id text [ref: > patients.patient_id, not null]
+  plan_id text [ref: > plans.plan_id, not null]
+  status text
+  payor text
+  start_date text
+  end_date text
+}
+
+Table conditions [headercolor: #2563EB] {
+  condition_id text [pk, note: 'cond-NNN-i']
+  patient_id text [ref: > patients.patient_id, not null]
+  code text [note: 'ICD-10-CM, e.g. M54.16']
+  description text
+  onset_date text [note: 'NULL = planted gap (PA-012)']
+  clinical_status text
+}
+
+Table encounters [headercolor: #2563EB] {
+  encounter_id text [pk, note: 'enc-NNN-eN']
+  patient_id text [ref: > patients.patient_id, not null]
+  encounter_class text [note: 'AMB']
+  type text [note: 'Office visit / Physical therapy (n visits) / ...']
+  start_date text
+  end_date text [note: 'PT end date drives C-02 duration checks']
+}
+
+Table observations [headercolor: #2563EB] {
+  observation_id text [pk, note: 'obs-NNN-i']
+  patient_id text [ref: > patients.patient_id, not null]
+  encounter_id text [ref: > encounters.encounter_id, not null]
+  code_system text [note: 'loinc.org or urn:example:synthetic-pa/obs']
+  code text
+  display text
+  value text
+  unit text
+  date text
+}
+
+// ================= Clinical Documents =================
+Table document_references [headercolor: #0D9488] {
+  doc_id text [pk, note: 'NOTE-001 .. NOTE-028']
+  patient_id text [ref: > patients.patient_id, not null]
+  encounter_id text [ref: > encounters.encounter_id]
+  doc_type text
+  date text
+  author text
+  status text
+  url text [note: 'notes/NOTE-XXX.md']
+  relates_to_doc_id text [ref: > document_references.doc_id, note: 'addendum link: NOTE-028 -> NOTE-027']
+}
+
+Table note_sections [headercolor: #0D9488] {
+  doc_id text [ref: > document_references.doc_id, not null]
+  section text [not null, note: 'hpi | exam | assessment | plan']
+  text text [not null]
+  indexes { (doc_id, section) [pk] }
+  Note: 'section key matches citation anchor NOTE-XXX#section'
+}
+
+// ================= Policy =================
+Table policies [headercolor: #7C3AED] {
+  policy_id text [pk, note: 'POL-MRI-20XX-Vn (+MA/CS families)']
+  family text
+  title text
+  version int
+  effective_start text
+  effective_end text
+  supersedes text [ref: > policies.policy_id, note: 'V3 -> V2 -> V1 chain']
+  precedence text [note: 'GENERAL | PLAN_SPECIFIC']
+  status_as_of text
+  source_file text
+  note text
+}
+
+Table policy_plans [headercolor: #7C3AED] {
+  policy_id text [ref: > policies.policy_id, not null]
+  plan_id text [ref: > plans.plan_id, not null]
+  indexes { (policy_id, plan_id) [pk] }
+}
+
+Table policy_criteria [headercolor: #7C3AED] {
+  policy_id text [ref: > policies.policy_id, not null]
+  criterion_id text [not null, note: 'C-01 .. C-04']
+  section_ref text [note: 'POL-XXX#2']
+  requirement text
+  min_duration_days int
+  max_exam_age_days int
+  imaging_lookback_days int
+  indexes { (policy_id, criterion_id) [pk] }
+}
+
+Table exceptions [headercolor: #7C3AED] {
+  exception_id text [pk, note: 'EXC-NNN']
+  title text
+  valid_from text
+  valid_to text [note: 'NULL = open-ended']
+  section_ref text
+  condition text
+  effect_json text [note: '{"waives": ["C-01","C-02"]} etc.']
+}
+
+Table exception_policies [headercolor: #7C3AED] {
+  exception_id text [ref: > exceptions.exception_id, not null]
+  policy_id text [ref: > policies.policy_id, not null]
+  indexes { (exception_id, policy_id) [pk] }
+}
+
+// ================= PA Workflow =================
+Table cases [headercolor: #D97706] {
+  case_id text [pk, note: 'PA-001 .. PA-016']
+  patient_id text [ref: > patients.patient_id, not null]
+  plan_id text [ref: > plans.plan_id, not null]
+  request_date text [note: 'governing date for policy version resolution']
+  scheduled_service_date text
+  service_name text
+  cpt text
+  status text [note: 'PENDING_REVIEW']
+  scenario text [note: 'eval label']
+}
+
+Table auth_history [headercolor: #D97706] {
+  auth_id text [pk, note: 'AUTH-001 .. AUTH-009']
+  patient_id text [ref: > patients.patient_id, not null]
+  service text
+  cpt text
+  decision text [note: 'APPROVED | DENIED']
+  decision_date text
+  service_date text
+  decided_by text
+  note text [note: 'AUTH-009 carries the 2nd prompt injection']
+}
+
+// ================= Table groups (drive the clustered layout) =================
+TableGroup Reference [color: #6B7280] {
+  plans
+}
+
+TableGroup Patient_and_Clinical [color: #2563EB] {
+  patients
+  coverage
+  conditions
+  encounters
+  observations
+}
+
+TableGroup Clinical_Documents [color: #0D9488] {
+  document_references
+  note_sections
+}
+
+TableGroup Policy [color: #7C3AED] {
+  policies
+  policy_plans
+  policy_criteria
+  exceptions
+  exception_policies
+}
+
+TableGroup PA_Workflow [color: #D97706] {
+  cases
+  auth_history
+}
+
+// Layout tips on dbdiagram.io (positions are saved by the site, not stored in DBML):
+//  - After pasting, click "Auto-arrange" (toolbar) once; then drag the 5 group boxes into a row/grid.
+//  - Use the relationship-line style toggle (straight/orthogonal) if lines still overlap.

@@ -1,0 +1,309 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-pt-016",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:ffe82553-536f-5ac6-ba11-c4c89dd5f1dc",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pt-016",
+        "identifier": [
+          {
+            "system": "urn:example:synthetic-pa/mrn",
+            "value": "SYN-016"
+          }
+        ],
+        "name": [
+          {
+            "family": "Beckett",
+            "given": [
+              "Tom"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1979-07-22"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pt-016"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:7983dbde-615b-599a-b29e-c23b92fc078a",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-016-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.50",
+              "display": "Low back pain, unspecified"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-016"
+        },
+        "onsetDateTime": "2026-04-01"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-016-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:91e08fb5-c65a-5996-b9d7-baf5487c53a6",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-016-e1",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-016"
+        },
+        "period": {
+          "start": "2026-07-13"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-016-e1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e593b3f5-5c20-5737-8620-4c9e68b0db5e",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-016-e2",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Physical therapy (12 visits)"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-016"
+        },
+        "period": {
+          "start": "2026-05-01",
+          "end": "2026-06-12"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-016-e2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:838f061f-2251-5550-90eb-e4261da5caec",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-016-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-016"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-016-e1"
+        },
+        "effectiveDateTime": "2026-07-13",
+        "valueQuantity": {
+          "value": 6,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-016-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:5a34a3e5-b61f-5c0d-8d90-69438f45ca02",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-016-2",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "urn:example:synthetic-pa/obs",
+              "code": "slr_right",
+              "display": "Straight leg raise test, right leg"
+            }
+          ],
+          "text": "Straight leg raise test, right leg"
+        },
+        "subject": {
+          "reference": "Patient/pt-016"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-016-e1"
+        },
+        "effectiveDateTime": "2026-07-13",
+        "valueString": "positive at 55 degrees"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-016-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e7b16d56-88f4-5937-854a-d644e6debe97",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-027",
+        "status": "current",
+        "type": {
+          "text": "Office visit note"
+        },
+        "subject": {
+          "reference": "Patient/pt-016"
+        },
+        "date": "2026-07-13",
+        "author": [
+          {
+            "display": "Dr. M. Rossi (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-027.md",
+              "title": "Office visit note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-016-e1"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-027"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:30d7f09d-6caa-5007-8de6-d72bbc5baa32",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-028",
+        "status": "current",
+        "type": {
+          "text": "Addendum note"
+        },
+        "subject": {
+          "reference": "Patient/pt-016"
+        },
+        "date": "2026-07-14",
+        "author": [
+          {
+            "display": "Dr. M. Rossi (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-028.md",
+              "title": "Addendum note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-016-e1"
+            }
+          ]
+        },
+        "relatesTo": [
+          {
+            "code": "appends",
+            "target": {
+              "reference": "DocumentReference/NOTE-027"
+            }
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-028"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:87d3bb64-0607-50d8-af7b-98880217979f",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "cov-016",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/pt-016"
+        },
+        "payor": [
+          {
+            "display": "Synthetic Health Plan"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "code": "plan",
+                  "display": "Plan"
+                }
+              ]
+            },
+            "value": "PPO-GOLD"
+          }
+        ],
+        "period": {
+          "start": "2024-01-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/cov-016"
+      }
+    }
+  ]
+}

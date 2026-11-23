@@ -1,0 +1,106 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-auth-002",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:de0fd844-fe2a-54a0-a9aa-a4e462e050bd",
+      "resource": {
+        "resourceType": "Claim",
+        "id": "claim-AUTH-002",
+        "status": "active",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+              "code": "professional",
+              "display": "Professional"
+            }
+          ]
+        },
+        "use": "preauthorization",
+        "patient": {
+          "reference": "Patient/pt-006"
+        },
+        "created": "2026-01-05",
+        "insurer": {
+          "display": "Synthetic Health Plan"
+        },
+        "provider": {
+          "display": "human_reviewer"
+        },
+        "priority": {
+          "coding": [
+            {
+              "code": "normal"
+            }
+          ]
+        },
+        "insurance": [
+          {
+            "sequence": 1,
+            "focal": true,
+            "coverage": {
+              "display": "Synthetic Health Plan"
+            }
+          }
+        ],
+        "procedure": [
+          {
+            "sequence": 1,
+            "procedureCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://www.ama-assn.org/go/cpt",
+                  "code": "97110"
+                }
+              ],
+              "text": "Physical therapy"
+            }
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Claim/claim-AUTH-002"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:e59f3305-5057-5868-9ec1-ef5c7d3f1240",
+      "resource": {
+        "resourceType": "ClaimResponse",
+        "id": "claimresponse-AUTH-002",
+        "status": "active",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+              "code": "professional"
+            }
+          ]
+        },
+        "use": "preauthorization",
+        "patient": {
+          "reference": "Patient/pt-006"
+        },
+        "created": "2026-01-05",
+        "insurer": {
+          "display": "Synthetic Health Plan"
+        },
+        "request": {
+          "reference": "Claim/claim-AUTH-002"
+        },
+        "outcome": "complete",
+        "preAuthRef": "AUTH-002",
+        "disposition": "APPROVED",
+        "preAuthPeriod": {
+          "start": "2026-01-12"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "ClaimResponse/claimresponse-AUTH-002"
+      }
+    }
+  ]
+}

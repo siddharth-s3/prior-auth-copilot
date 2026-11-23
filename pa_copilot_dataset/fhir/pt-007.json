@@ -1,0 +1,264 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "id": "bundle-pt-007",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:a67c9200-26fe-5b8f-882c-1752ec31960b",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pt-007",
+        "identifier": [
+          {
+            "system": "urn:example:synthetic-pa/mrn",
+            "value": "SYN-007"
+          }
+        ],
+        "name": [
+          {
+            "family": "Briggs",
+            "given": [
+              "Walter"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1963-03-05"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/pt-007"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:44a1e48d-eb82-5abc-82d4-6731c2800fc7",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-007-1",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.50",
+              "display": "Low back pain, unspecified"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-007"
+        },
+        "onsetDateTime": "2026-09-10"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-007-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:ae89c31b-12ae-539b-b74c-89831df1c8f1",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cond-007-2",
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "Z85.46",
+              "display": "Personal history of malignant neoplasm of prostate"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-007"
+        },
+        "onsetDateTime": "2023-02-01"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/cond-007-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:7b49afc4-f8b5-5c1e-81c4-d0d3b44e1980",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "enc-007-e1",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/pt-007"
+        },
+        "period": {
+          "start": "2026-09-15"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/enc-007-e1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:8df00233-8c19-5f36-8a30-60845f5ab0d4",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-007-1",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "72514-3",
+              "display": "Pain severity 0-10 verbal numeric rating"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/pt-007"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-007-e1"
+        },
+        "effectiveDateTime": "2026-09-15",
+        "valueQuantity": {
+          "value": 6,
+          "unit": "{score}"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-007-1"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:05017f5e-d8ee-56ae-ae86-5eb7ca8a076b",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "obs-007-2",
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "urn:example:synthetic-pa/obs",
+              "code": "night_pain",
+              "display": "Night pain (pain that wakes the patient or is worse at night)"
+            }
+          ],
+          "text": "Night pain (pain that wakes the patient or is worse at night)"
+        },
+        "subject": {
+          "reference": "Patient/pt-007"
+        },
+        "encounter": {
+          "reference": "Encounter/enc-007-e1"
+        },
+        "effectiveDateTime": "2026-09-15",
+        "valueString": "yes"
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/obs-007-2"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:7f5b7b26-a0de-5bf4-ae12-cfb2cbb5932c",
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "NOTE-014",
+        "status": "current",
+        "type": {
+          "text": "Office visit note"
+        },
+        "subject": {
+          "reference": "Patient/pt-007"
+        },
+        "date": "2026-09-15",
+        "author": [
+          {
+            "display": "Dr. M. Rossi (PCP)"
+          }
+        ],
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-014.md",
+              "title": "Office visit note"
+            }
+          }
+        ],
+        "context": {
+          "encounter": [
+            {
+              "reference": "Encounter/enc-007-e1"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DocumentReference/NOTE-014"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:191a2c72-7bc0-5eb4-bbd6-52d9e6263562",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "cov-007",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/pt-007"
+        },
+        "payor": [
+          {
+            "display": "Synthetic Health Plan"
+          }
+        ],
+        "class": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "code": "plan",
+                  "display": "Plan"
+                }
+              ]
+            },
+            "value": "PPO-GOLD"
+          }
+        ],
+        "period": {
+          "start": "2024-01-01"
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Coverage/cov-007"
+      }
+    }
+  ]
+}

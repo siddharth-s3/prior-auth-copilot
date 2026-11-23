@@ -1,0 +1,101 @@
+model_list:
+  - model_name: preauth-model
+    litellm_params:
+      model: gemini/gemini-3.1-flash-lite
+      api_key: os.environ/GOOGLE_API_KEY
+  - model_name: preauth-model
+    litellm_params:
+      model: groq/openai/gpt-oss-20b
+      api_key: os.environ/GROQ_API_KEY
+      max_completion_tokens: 2048
+      temperature: 1
+      # Lab environment: TLS-intercepting proxy presents a CA without
+      # key-usage extensions; Python 3.13 strict chain checks reject it. Verification disabled
+      # for this provider entry only (traffic still transits the corp proxy regardless).
+      ssl_verify: false
+
+  # Gemini-only alias for the AG-UI/A2UI service: generate_a2ui needs a large tool schema + strict
+  # tool calling, which Groq's gpt-oss-20b fails ("tool_use_failed") and its 8k TPM limit can't carry.
+  - model_name: preauth-gemini
+    litellm_params:
+      model: gemini/gemini-3.1-flash-lite
+      api_key: os.environ/GOOGLE_API_KEY
+
+  # ---- Gemini fallback chain (same GOOGLE_API_KEY; free-tier quotas are counted PER MODEL, so a 429 on
+  # one model usually leaves the others available). Each is its own model group so LiteLLM can walk the
+  # chain in order. Tried fastest/most reliable first. Not usable: gemini-2.5-flash / -flash-lite (404 "no
+  # longer available to new users") and antigravity-* (Interactions API only, not chat completions).
+  - model_name: fb-gemini-3.5-flash-lite
+    litellm_params: {model: gemini/gemini-3.5-flash-lite, api_key: os.environ/GOOGLE_API_KEY}
+  - model_name: fb-gemini-3-flash
+    litellm_params: {model: gemini/gemini-3-flash-preview, api_key: os.environ/GOOGLE_API_KEY}
+  - model_name: fb-gemini-3.6-flash
+    litellm_params: {model: gemini/gemini-3.6-flash, api_key: os.environ/GOOGLE_API_KEY, timeout: 90}   # slow (~40s seen)
+  - model_name: fb-gemini-4-hydrogen
+    litellm_params: {model: gemini/gemini-4-hydrogen, api_key: os.environ/GOOGLE_API_KEY, timeout: 120}  # timed out at 60s in probe
+  - model_name: fb-gemma-4-31b
+    litellm_params: {model: gemini/gemma-4-31b-it, api_key: os.environ/GOOGLE_API_KEY, timeout: 120}     # last resort; tool calling may be weaker
+
+  # Embedding model used only by the semantic cache (not for chat traffic).
+  - model_name: preauth-embedding
+    litellm_params:
+      model: gemini/gemini-embedding-001
+      api_key: os.environ/GOOGLE_API_KEY
+
+# Primary groups: round-robin between deployments, then walk the Gemini fallback chain on failure.
+router_settings:
+  routing_strategy: simple-shuffle
+  timeout: 30
+  num_retries: 1
+  retry_policy:
+    RateLimitErrorRetries: 0      # a 429 means that model's quota is gone: go to the next model, don't retry it
+  allowed_fails: 1
+  cooldown_time: 60               # a failing deployment is skipped for 60s before being tried again
+  fallbacks:
+    - preauth-model:  [fb-gemini-3.5-flash-lite, fb-gemini-3-flash, fb-gemini-3.6-flash, fb-gemini-4-hydrogen, fb-gemma-4-31b]
+    - preauth-gemini: [fb-gemini-3.5-flash-lite, fb-gemini-3-flash, fb-gemini-3.6-flash, fb-gemini-4-hydrogen, fb-gemma-4-31b]
+
+litellm_settings:
+  callbacks: [raw_model_hook.raw_model_name, raw_model_hook.cache_hit_marker]
+  # Semantic cache in Qdrant: a new question close enough to a cached one is answered from cache.
+  cache: true
+  cache_params:
+    type: qdrant-semantic
+    # OPT-IN only. Agent requests are ~20k tokens of near-identical system prompt + tool schemas, so
+    # semantic similarity can't tell two different user questions apart (false hits). Callers that
+    # want caching send {"cache": {"use-cache": true}} per request.
+    mode: default_off
+    qdrant_semantic_cache_embedding_model: preauth-embedding
+    qdrant_semantic_cache_vector_size: 3072   # gemini-embedding-001 output size
+    qdrant_api_base: http://host.docker.internal:6333
+    qdrant_collection_name: litellm_semantic_cache
+    similarity_threshold: 0.98      # strict: PA case ids differ by a digit, avoid cross-case hits
+    ttl: 3600
+    supported_call_types: ["acompletion", "completion"]   # chat only; no MCP/embedding caching
+
+general_settings:
+  ui_username: os.environ/UI_USERNAME
+  ui_password: os.environ/UI_PASSWORD
+
+# MCP gateway: upstreams carry our backend bearer (LiteLLM injects it); the gateway itself is unauthenticated.
+mcp_servers:
+  preauth_qdrant:
+    url: "http://host.docker.internal:8100/mcp"
+    transport: http
+    auth_type: bearer_token          # upstream: LiteLLM injects Authorization: Bearer <MCP_API_TOKEN>
+    auth_value: os.environ/MCP_API_TOKEN
+    allow_all_keys: true             # gateway-side: open to all callers (lab posture, per request)
+  preauth_sqlite:
+    url: "http://host.docker.internal:8101/mcp"
+    transport: http
+    auth_type: bearer_token
+    auth_value: os.environ/MCP_API_TOKEN
+    allow_all_keys: true
+
+# Agent gateway: ADK copilot served over A2A (adk api_server --a2a, container :8001)
+agents:
+  - agent_name: preauth_copilot
+    agent_card_params:
+      name: "preauth"
+      url: "http://host.docker.internal:8001/a2a/preauth"
+      protocolVersion: "1.0"
