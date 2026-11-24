@@ -40,9 +40,12 @@ def _setup_tracing():
         provider = existing if hasattr(existing, "add_span_processor") else TracerProvider()
         lf = os.environ.get("LANGFUSE_HOST", "http://host.docker.internal:3000")
         basic = base64.b64encode(f"{pk}:{sk}".encode()).decode()
+        from .tracing_ctx import ExperimentAttributes
+        provider.add_span_processor(ExperimentAttributes())   # evaluation runs: link spans to the Langfuse experiment
         provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(
             endpoint=f"{lf.rstrip('/')}/api/public/otel/v1/traces",
-            headers={"Authorization": f"Basic {basic}"})))
+            # Langfuse v4 requires this header from direct OTLP exporters
+            headers={"Authorization": f"Basic {basic}", "x-langfuse-ingestion-version": "4"})))
         lens_url, lens_key = os.environ.get("LENS_URL"), os.environ.get("LENS_TRACING_KEY")
         if lens_url and lens_key:
             provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(
@@ -98,7 +101,10 @@ else:
 
     def make_model():
         # openai/* -> LiteLLM picks up OPENAI_API_BASE/OPENAI_API_KEY (proxy is unauthenticated)
-        return LiteLlm(model=os.environ.get("AGENT_LLM_MODEL", "openai/preauth-model"))
+        # explicit client-side timeout: litellm's default is ~100 minutes, so one stalled connection could freeze a
+        # whole review. The gateway still walks its fallback chain; this only bounds how long we wait for it.
+        return LiteLlm(model=os.environ.get("AGENT_LLM_MODEL", "openai/preauth-model"),
+                       timeout=float(os.environ.get("LLM_TIMEOUT_S", "150")))
 
 MODEL = make_model()
 
@@ -110,7 +116,10 @@ def _gw_headers(ctx):
     return {"x-litellm-api-key": LITELLM_KEY}
 
 def toolset(only):
-    return McpToolset(connection_params=StreamableHTTPConnectionParams(url=MCP_GATEWAY),
+    # bounded waits: 15 s to connect, 90 s for a tool result (a stuck MCP server fails fast instead of hanging)
+    return McpToolset(connection_params=StreamableHTTPConnectionParams(
+                          url=MCP_GATEWAY, timeout=float(os.environ.get("MCP_CONNECT_TIMEOUT_S", "15")),
+                          sse_read_timeout=float(os.environ.get("MCP_READ_TIMEOUT_S", "90"))),
                       header_provider=_gw_headers, tool_filter=only)
 
 def _tag_model(callback_context, llm_response):
@@ -181,6 +190,9 @@ import asyncio, json, re, uuid
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types as _gtypes
+from .review_client import ReviewError, call_review, call_sqlite
+from .validate import apply_checks, parse_json as _parse_json
+from .a2ui_catalog import CatalogError, review_surfaces
 
 PIPELINE_SUFFIX = """
 
@@ -217,19 +229,6 @@ RECOMMENDATIONS = ("MEETS_CRITERIA", "MORE_INFORMATION_NEEDED", "DOES_NOT_APPEAR
                    "SPECIALIST_REVIEW")
 
 
-def _parse_json(text):
-    """Model output -> dict. Tolerates ```json fences and surrounding prose."""
-    if isinstance(text, dict):
-        return text
-    if not isinstance(text, str):
-        return None
-    m = re.search(r"```(?:json)?\s*(\{.*\})\s*```", text, re.S) or re.search(r"(\{.*\})", text, re.S)
-    try:
-        return json.loads(m.group(1)) if m else None
-    except Exception:
-        return None
-
-
 async def run_review(case_id: str, tool_context) -> dict:
     """Run the COMPLETE prior-authorization review for one case (clinical evidence, policy, coverage,
     criteria check) and return the validated result object. Call exactly once per review request, with the
@@ -240,6 +239,18 @@ async def run_review(case_id: str, tool_context) -> dict:
     """
     memory = await asyncio.to_thread(recall_memories, "reviewer formatting preferences and standing overrides",
                                      tool_context)
+    # reviewer-supplied data (REV-NNN) from earlier human review actions: part of the next review's input,
+    # clearly labelled as reviewer assertions (never as the original clinical record)
+    supplements = []
+    try:
+        supplements = (await call_review("preauth_get_review_state", {"case_id": case_id})).get("supplements", [])
+    except ReviewError:
+        pass   # review service down: review proceeds from the record alone
+    supp_text = ""
+    if supplements:
+        supp_text = ("\n\nREVIEWER-SUPPLIED DATA (assertions by the human reviewer, not part of the original "
+                     "record; cite as REV-NNN and say so in your findings):\n" +
+                     "\n".join(f"- {s['supp_id']}: {s['item']} = {s['value']}" for s in supplements))
     last_err = None
     for attempt in (1, 2):
         svc = InMemorySessionService()
@@ -247,7 +258,7 @@ async def run_review(case_id: str, tool_context) -> dict:
         await svc.create_session(app_name="preauth_review", user_id=tool_context.user_id, session_id=sid)
         runner = Runner(agent=review_pipeline, app_name="preauth_review", session_service=svc)
         msg = _gtypes.Content(role="user", parts=[_gtypes.Part(text=(
-            f"REVIEW mode: review case {case_id}. Produce your findings JSON for this case."))])
+            f"REVIEW mode: review case {case_id}. Produce your findings JSON for this case." + supp_text))])
         steps = []
         try:
             async for ev in runner.run_async(user_id=tool_context.user_id, session_id=sid, new_message=msg):
@@ -265,20 +276,18 @@ async def run_review(case_id: str, tool_context) -> dict:
     else:
         return {"error": f"review pipeline failed for {case_id}: {last_err}. Do not fabricate a result."}
 
-    # schema check: the system never approves/denies and always needs a human
-    problems = []
-    if result.get("recommendation") not in RECOMMENDATIONS:
-        problems.append(f"invalid recommendation {result.get('recommendation')!r}; forced to SPECIALIST_REVIEW")
-        result["recommendation"] = "SPECIALIST_REVIEW"
-    result["requires_human_review"] = True
-    result.setdefault("case_id", case_id)
-    if problems:
-        result["uncertainties"] = list(result.get("uncertainties") or []) + problems
     findings = {k: _parse_json(st.get(k)) or st.get(k) for k in
                 ("clinical_evidence", "policy_findings", "coverage_check")}
+    # deterministic checks (no LLM): schema, citations vs the real record, recommendation precedence
+    try:
+        bundle = await call_sqlite("preauth_case_details", {"case_id": case_id})
+    except ReviewError:
+        bundle = None
+    result = apply_checks(result, bundle, findings.get("policy_findings"), supplements)
+    result.setdefault("case_id", case_id)
     # AG-UI shared state: the UI panel reads this (STATE_DELTA), no scraping of chat text.
     tool_context.state["adjudication"] = {"case_id": result["case_id"], "result": result,
-                                          "findings": findings, "steps": steps,
+                                          "findings": findings, "steps": steps, "supplements_used": supplements,
                                           "reviewer_memory": memory.get("memories", [])}
     # generate_a2ui's sub-model only sees user/model TEXT turns (never tool results), so on its own it
     # invents a plausible-looking card. AG-UI "context" entries ARE put in its prompt: hand it the real result.
@@ -289,6 +298,19 @@ async def run_review(case_id: str, tool_context) -> dict:
     return {"result": result, "reviewer_memory": memory.get("memories", []), "steps_completed": steps}
 
 
+def render_review_ui(tool_context) -> dict:
+    """Render the review screens for the case just reviewed: the criteria checklist and, when information
+    is missing, a case-specific form for it. Built in code from the validated result (fixed A2UI catalog),
+    so the values are always the real ones. Call once, right after run_review, with no arguments."""
+    adj = tool_context.state.get("adjudication")
+    if not adj or not adj.get("result"):
+        return {"error": "no review result in this session; call run_review first"}
+    try:
+        return review_surfaces(adj["result"])
+    except CatalogError as e:   # never render something outside the catalog
+        return {"error": f"review screen rejected by the A2UI catalog check: {e}"}
+
+
 root_agent = LlmAgent(
     name="supervisor",
     model=MODEL,
@@ -297,5 +319,5 @@ root_agent = LlmAgent(
                 "state, limits retries, detects disagreement, composes the final summary.",
     instruction=prompts.SUPERVISOR,
     sub_agents=[clinical_evidence_agent, memory_agent],
-    tools=[run_review],   # review intents -> one deterministic pipeline; fetch/memory intents -> transfer
+    tools=[run_review, render_review_ui],   # review intents -> one deterministic pipeline; fetch/memory intents -> transfer
 )

@@ -27,3 +27,5 @@ synthea/
 # per-folder READMEs kept local only
 adk_copilot/README.md
 pa_copilot_dataset/README.md
+ingestion_retriever/review_state/
+pa_copilot_dataset/eval/results/

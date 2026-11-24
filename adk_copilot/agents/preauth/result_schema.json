@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PriorAuthReviewResult",
+  "type": "object",
+  "required": ["case_id", "recommendation", "applicable_policy_id", "criteria", "missing_information",
+               "uncertainties", "requires_human_review", "prompt_injection_present", "injection_evidence_ids"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^PA-[0-9]{3}$"},
+    "recommendation": {"enum": ["MEETS_CRITERIA", "MORE_INFORMATION_NEEDED",
+                                 "DOES_NOT_APPEAR_TO_MEET_CRITERIA", "SPECIALIST_REVIEW"]},
+    "applicable_policy_id": {"type": ["string", "null"]},
+    "criteria": {"type": "array", "items": {
+      "type": "object", "required": ["criterion_id", "status", "evidence_ids"],
+      "properties": {
+        "criterion_id": {"type": "string", "pattern": "^C-[0-9]{2}$"},
+        "status": {"enum": ["SUPPORTED", "NOT_SUPPORTED", "INSUFFICIENT_EVIDENCE", "CONFLICTING", "NOT_APPLICABLE"]},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}}}}},
+    "missing_information": {"type": "array", "items": {"type": "string"}},
+    "uncertainties": {"type": "array", "items": {"type": "string"}},
+    "requires_human_review": {"const": true},
+    "prompt_injection_present": {"type": "boolean"},
+    "injection_evidence_ids": {"type": "array", "items": {"type": "string"}},
+    "reviewer_summary": {"type": "string"},
+    "quality_flags": {"type": "array"}
+  }
+}

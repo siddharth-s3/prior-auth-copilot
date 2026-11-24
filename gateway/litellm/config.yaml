@@ -91,6 +91,12 @@ mcp_servers:
     auth_type: bearer_token
     auth_value: os.environ/MCP_API_TOKEN
     allow_all_keys: true
+  preauth_review:
+    url: "http://host.docker.internal:8102/mcp"     # reviewer actions + audit log (the only writable lane; used by the app, not by the model)
+    transport: http
+    auth_type: bearer_token
+    auth_value: os.environ/MCP_API_TOKEN
+    allow_all_keys: true
 
 # Agent gateway: ADK copilot served over A2A (adk api_server --a2a, container :8001)
 agents:

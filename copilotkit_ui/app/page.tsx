@@ -72,6 +72,57 @@ function Inspector({ events, state, result, tab, setTab, onClose, onClear }: { e
   );
 }
 
+const RECS = ["MEETS_CRITERIA", "MORE_INFORMATION_NEEDED", "DOES_NOT_APPEAR_TO_MEET_CRITERIA", "SPECIALIST_REVIEW"];
+
+async function post(path: string, body: any) {
+  const r = await fetch(`${API}${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || `HTTP ${r.status}`);
+  return j;
+}
+
+// Human review: the reviewer (a person) records the disposition; every action is timestamped and audited server-side.
+function ReviewActions({ caseId, rec, onChanged }: { caseId: string; rec: string; onChanged: () => void }) {
+  const [mode, setMode] = useState<null | "override" | "escalate" | "clarify">(null);
+  const [final, setFinal] = useState(rec);
+  const [text, setText] = useState("");
+  const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null);
+  const [state, setState] = useState<any>(null);
+  const [audit, setAudit] = useState<any[] | null>(null);
+  const load = async () => { try { setState(await (await fetch(`${API}/ui/cases/${caseId}/review`)).json()); } catch { setState(null); } };
+  const loadAudit = async () => { try { setAudit(await (await fetch(`${API}/ui/cases/${caseId}/audit`)).json()); } catch { setAudit([]); } };
+  useEffect(() => { load(); setMode(null); setMsg(null); setAudit(null); setFinal(rec); }, [caseId, rec]);
+  const act = async (fn: () => Promise<any>) => {
+    try { const r = await fn(); setMsg({ ok: true, t: `Saved: ${r.status} · ${r.ts}` }); setMode(null); setText(""); await load(); if (audit) await loadAudit(); onChanged(); }
+    catch (e: any) { setMsg({ ok: false, t: String(e.message || e) }); }
+  };
+  const disp = (action: string, finalRec: string, reason: string) => post(`/ui/cases/${caseId}/disposition`, { action, final_recommendation: finalRec, ai_recommendation: rec, reason, reviewer: "reviewer" });
+  const d = state?.latest_disposition;
+  return (
+    <div className="actions">
+      <div className="k">Reviewer decision · status <b>{state?.status ?? "…"}</b>{d && <> · last: {d.action} → {d.final_recommendation} ({d.ts})</>}</div>
+      <div className="row">
+        <button className="btn sm" onClick={() => act(() => disp("ACCEPT", rec, ""))}>Accept recommendation</button>
+        <button className="btn sm ghost" onClick={() => setMode(mode === "override" ? null : "override")}>Override…</button>
+        <button className="btn sm ghost" onClick={() => setMode(mode === "escalate" ? null : "escalate")}>Escalate…</button>
+        <button className="btn sm ghost" onClick={() => setMode(mode === "clarify" ? null : "clarify")}>Request clarification…</button>
+        <button className="btn sm ghost" onClick={() => (audit ? setAudit(null) : loadAudit())}>{audit ? "Hide audit" : "Audit trail"}</button>
+      </div>
+      {mode && (
+        <div className="form">
+          {mode === "override" && <select value={final} onChange={e => setFinal(e.target.value)}>{RECS.map(r => <option key={r}>{r}</option>)}</select>}
+          <textarea rows={2} value={text} onChange={e => setText(e.target.value)} placeholder={mode === "clarify" ? "What do you need clarified?" : "Reason (required)"} />
+          <button className="btn sm" disabled={!text.trim()} onClick={() => act(() =>
+            mode === "clarify" ? post(`/ui/cases/${caseId}/clarification`, { question: text, reviewer: "reviewer" })
+              : disp(mode === "override" ? "OVERRIDE" : "ESCALATE", mode === "override" ? final : "SPECIALIST_REVIEW", text))}>Confirm</button>
+        </div>)}
+      {msg && <div className={msg.ok ? "ok" : "err"}>{msg.t}</div>}
+      {audit && (<table><thead><tr><th>time (UTC)</th><th>actor</th><th>action</th><th>detail</th></tr></thead>
+        <tbody>{audit.length ? audit.map(a => <tr key={a.id}><td>{a.ts}</td><td>{a.actor}</td><td>{a.action}</td><td>{JSON.stringify(a.detail)}</td></tr>) : <tr><td colSpan={4}>no actions yet</td></tr>}</tbody></table>)}
+    </div>
+  );
+}
+
 function Workspace() {
   const [cases, setCases] = useState<any[]>([]);
   const [sel, setSel] = useState<string | null>(null);
@@ -80,7 +131,8 @@ function Workspace() {
   const [results, setResults] = useState<Record<string, any>>({});
   const { agent } = useAgent({ agentId: "preauth" });
 
-  useEffect(() => { fetch(`${API}/ui/cases`).then(r => r.json()).then(setCases).catch(() => setCases([])); }, []);
+  const refreshCases = () => fetch(`${API}/ui/cases`).then(r => r.json()).then(setCases).catch(() => setCases([]));
+  useEffect(() => { refreshCases(); }, []);
   useEffect(() => { if (!sel) return setDetail(null); setDetail(null); fetch(`${API}/ui/cases/${sel}`).then(r => r.json()).then(setDetail).catch(() => setDetail({ error: true })); }, [sel]);
 
   // The review result arrives as AG-UI shared state (STATE_DELTA/SNAPSHOT: state.adjudication), not as chat text.
@@ -137,6 +189,9 @@ function Workspace() {
                 <div className="rec">{res.result?.recommendation}</div>
                 <p className="k">Policy: {res.result?.applicable_policy_id ?? "none"} · human review required · pipeline: {(res.steps || []).join(" → ")}</p>
                 <p>{res.result?.reviewer_summary}</p>
+                {res.result?.verification && <p className="k">Citations verified {res.result.verification.citations_valid}/{res.result.verification.citations_total} · schema {res.result.verification.schema_valid ? "valid" : "INVALID"}{res.result.verification.recommendation_corrected ? ` · recommendation corrected (model said ${res.result.recommendation_model})` : ""}</p>}
+                {!!res.result?.quality_flags?.length && <details><summary>Quality flags ({res.result.quality_flags.length})</summary><div><ul>{res.result.quality_flags.map((f: any, i: number) => <li key={i}>{String(f)}</li>)}</ul></div></details>}
+                <ReviewActions caseId={res.case_id} rec={res.result?.recommendation} onChanged={refreshCases} />
                 <details open><summary>Criteria</summary><div><Table rows={res.result?.criteria || []} /></div></details>
                 {Object.entries(res.findings || {}).map(([k, v]) => <details key={k}><summary>Specialist findings: {k.replace(/_/g, " ")}</summary><div><pre className="raw">{pretty(v)}</pre></div></details>)}
                 {!!res.result?.missing_information?.length && <details><summary>Missing information</summary><div><ul>{res.result?.missing_information.map((m: any, i: number) => <li key={i}>{String(m)}</li>)}</ul></div></details>}

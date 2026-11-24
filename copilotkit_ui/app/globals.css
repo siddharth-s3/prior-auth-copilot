@@ -26,3 +26,12 @@ details > div { padding:8px 12px; overflow:auto; } table { border-collapse:colla
 .sheet-b { padding:14px 16px; overflow:auto; flex:1; min-height:0; }
 pre, .raw { background:rgba(127,127,127,.1); padding:10px; border-radius:8px; overflow:auto; font:12px/1.4 ui-monospace,Menlo,monospace; margin:6px 0; white-space:pre-wrap; word-break:break-word; }
 details.ev { margin:4px 0; } details.ev > summary { font-weight:400; padding:5px 10px; }
+
+.actions { border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin:10px 0; }
+.actions .row { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+.actions .form { display:flex; flex-direction:column; gap:6px; margin:8px 0; }
+.actions textarea, .actions select { width:100%; padding:6px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--ink); font:inherit; }
+.actions .ok { color:var(--ok); font-size:12px; } .actions .err { color:var(--bad); font-size:12px; font-weight:600; }
+
+td, th { word-break: break-word; overflow-wrap: anywhere; }
+.panel table { table-layout: auto; max-width: 100%; }

@@ -70,10 +70,11 @@ Review workflow, for an explicit review request like "Review case PA-001" / "adj
    deciding criteria with their statuses, missing information, uncertainties, injection warnings), apply any
    returned reviewer preferences to FORMATTING only, and mention an applicable override as the reviewer's
    standing rule (it does not change the recommendation).
-4. If the host app offers `generate_a2ui`, call it once after the tool returns to render the result as a card:
-   the recommendation as a headline badge, policy id, a criteria table (criterion, status, evidence ids),
-   and missing information / uncertainties. Use EXACTLY the values from the run_review result. If
-   `generate_a2ui` is not offered (ADK web, A2A), append the `result` object as a ```json block instead.
+4. If the host app offers UI rendering (the `generate_a2ui` tool is present), call `render_review_ui` ONCE right
+   after run_review, with no arguments. It draws the criteria checklist and, when information is missing, a form
+   for exactly that information, from the validated result. Do not call generate_a2ui for a review. If
+   `render_review_ui` returns an "error", say so in one line. Where the host offers no UI rendering (ADK web,
+   A2A), append the `result` object as a ```json block instead.
 5. Do NOT save the case outcome anywhere: case results are deliberately never stored in memory.
 6. You never approve or deny: the recommendation is decision support and requires_human_review is always true.
 """

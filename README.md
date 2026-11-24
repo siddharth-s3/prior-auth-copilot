@@ -62,8 +62,15 @@ real use (see [Security notes](#security-notes)).
   - Hidden instructions in notes, history or draft policies are treated as plain text
   - They are flagged and never followed
 - **Tools belong to specialists**
-  - The supervisor only passes work to others
-  - Each specialist agent has its own tools
+  - Each specialist agent has its own data tools
+  - For fetch ("show PA-004") and memory requests the supervisor only passes the work to the right agent
+  - For a review the supervisor calls one tool, `run_review`, which runs the specialists in a fixed order in code
+- **Fixed-order review.** Clinical evidence, then policy, then coverage, then criteria and quality run in that order, so a model cannot forget to hand control back. Calls use time limits (model 150 s, tools 15 s to connect and 90 s to answer) and the AG-UI service does not stream model output, so gateway fallbacks still work when Gemini returns 503
+- **Checked by code, not only by the model.** The result is checked against a JSON schema, every cited id must exist in the case record, and the recommendation is recomputed from the criterion statuses
+- **Human review and audit.** The reviewer can accept, override, escalate, ask for clarification or supply missing data. Each action is saved with a time stamp in an append-only audit log, and the case list shows the new status
+- **Screens built from a fixed catalog (A2UI).** The criteria checklist and a form for the missing information are built in code from the validated result (a fixed list of components), not written by the model
+- **Protocol inspector.** In the app, **{ } Show JSON** and **{ } AG-UI / A2UI JSON** show the live AG-UI events, shared state, the A2UI surface and the result
+- **Evaluation in Langfuse.** Datasets, experiment runs, code scores (including what was pulled from Qdrant) and three LLM judges that run inside Langfuse (see [Human review, tests and evaluation](#human-review-tests-and-evaluation))
 
 ## Quick start
 
@@ -117,15 +124,16 @@ You do **not** need Node.js, Java, Postgres or Python packages on your computer.
 | **CopilotKit app** | <http://localhost:3100> | The reviewer app: case list, case details, **Adjudicate** button, result panel and chat (AG-UI and A2UI) |
 | **ADK web** | <http://localhost:8000> | Google ADK developer screen for the `preauth` agent (shows agent hand-offs and tool calls) |
 | **LiteLLM** | <http://localhost:4000/ui> | The gateway for models, tools and agents |
-| **Langfuse** | <http://localhost:3000> | Tracing, sessions and prompt versions (agents load their prompts from here) |
+| **Langfuse** | <http://localhost:3000> | Tracing, sessions and prompt versions (agents load their prompts from here), plus the evaluation datasets, experiments and LLM judges |
 | **Qdrant** | <http://localhost:6333/dashboard> | Vector database for policy text and clinical-note chunks |
 | **Lens** | <http://localhost:4318/ui/> | An extra, optional screen for traces |
 | **mem0 API** | <http://localhost:8200/docs> | Long-term memory service (reviewer preferences and overrides) |
 | A2A server | <http://localhost:8001> | The same agent team, offered over the A2A protocol (listed in the LiteLLM agent registry) |
-| AG-UI endpoint | <http://localhost:8002> | Backend for the CopilotKit app (AG-UI and A2UI), plus the case list and case details |
+| AG-UI endpoint | <http://localhost:8002> | Backend for the CopilotKit app (AG-UI and A2UI), plus the case list, case details and the reviewer-action calls |
 | Qdrant MCP / SQLite MCP | `:8100` / `:8101` | MCP tool servers: search for policies and notes, and read case data. Agents reach them through LiteLLM |
+| Review MCP | `:8102` | The only writable lane: reviewer decisions, clarification requests, reviewer-supplied data and an append-only audit log. Used by the app (people), never by the model |
 
-These ports must be free: `3000 3100 4000 4318 6333 6334 8000 8001 8002 8100 8101 8200`. The installer checks them.
+These ports must be free: `3000 3100 4000 4318 6333 6334 8000 8001 8002 8100 8101 8102 8200`. The installer checks them.
 
 ### Architecture
 
@@ -133,12 +141,17 @@ These ports must be free: `3000 3100 4000 4318 6333 6334 8000 8001 8002 8100 810
 
 You can edit the diagram: open [`architecture.drawio`](docs/architecture/architecture.drawio) in draw.io.
 
+
 About embeddings: the ingestion service and the Qdrant MCP server call the Gemini embedding API directly. Only
 mem0 and the semantic cache use the LiteLLM embedding name (`gemini-embedding-001`, 3072 numbers per text).
 
 Design rules to know:
 
-- The supervisor has **no data tools**. The specialist agents own them.
+- The supervisor has **no data tools**. The specialist agents own them. Its only tools are `run_review` (runs the fixed-order review
+  and saves the result in AG-UI shared state as `state.adjudication`) and `render_review_ui` (builds the A2UI screens).
+- **Intent routing.** "show my cases" and "show PA-004" go to the clinical agent only. Memory requests go to the memory agent only.
+  "Review" or "adjudicate" calls `run_review`.
+- The result panel reads the shared state; it does not read chat text.
 - The memory agent is the only agent with memory tools.
 - Memory holds only reviewer **preferences and overrides**, never case results.
 - Agent prompts live in Langfuse, where they can be edited and versioned. The file `agents/preauth/prompts.py`
@@ -149,12 +162,65 @@ Design rules to know:
 - **CopilotKit app** (<http://localhost:3100>): pick a case on the left and read its details. Press
   **Adjudicate**. The supervisor runs the full review, and the result shows next to the case.
   You can also type in the chat, for example "remember that I want summaries in 3 bullets".
+  Under the result you can record a decision (see [Human review, tests and evaluation](#human-review-tests-and-evaluation)).
+  **{ } Show JSON** (result panel) and **{ } AG-UI / A2UI JSON** (chat header) open the protocol inspector.
 - **ADK web** (<http://localhost:8000>): choose the `preauth` app and type `Review case PA-001`.
   The 16 cases PA-001 to PA-016 each test a different rule. The expected results are in
   [`pa_copilot_dataset/README.md`](pa_copilot_dataset/README.md).
 - **Prompts**: edit them in Langfuse (*Prompts -> preauth/...*, label `production`), then restart the agents
   (`cd adk_copilot && docker compose restart`). If you load the prompts again from `prompts.py`, it replaces
   the copy in Langfuse.
+
+## Human review, tests and evaluation
+
+**Human review.** After a review, the result panel has reviewer actions: Accept, Override (pick another
+recommendation and give a reason), Escalate, Request clarification, and an **Audit trail**. Missing information can
+be supplied through the form shown in the chat. Every action is stored with a timestamp in the Review MCP
+(`ingestion_retriever/mcp_review`, a separate writable database with an append-only audit log) and the case list
+shows the new status. The model has no tools to write there: decisions are made by people.
+
+**Deterministic checks.** After the model answers, code (not the model) checks the result against a JSON schema,
+verifies every cited id exists in the case record (unknown ids are removed and flagged), and recomputes the
+recommendation from the criterion statuses with the documented precedence rule
+(`adk_copilot/agents/preauth/validate.py`).
+
+**Unit tests** (no model, no network):
+
+```bash
+docker exec adk_copilot-adk-agui-1 python -m pytest -q
+```
+
+**Evaluation lives in Langfuse** (http://localhost:3000). The runner `pa_copilot_dataset/eval/run_eval.py` calls the real app
+and writes datasets, experiment runs, scores and LLM-judge results into Langfuse. Standard library only.
+
+```bash
+python3 pa_copilot_dataset/eval/run_eval.py setup                                   # once (idempotent)
+python3 pa_copilot_dataset/eval/run_eval.py run --name my-run --cases PA-001,PA-004  # or: --sample 4 --seed 7  or all 16
+python3 pa_copilot_dataset/eval/run_eval.py retrieval --name my-rt                   # 6 policy-retrieval items, no model calls
+python3 pa_copilot_dataset/eval/run_eval.py replay --name my-replay --hours 24 --sample 2 --seed 1   # existing traces
+python3 pa_copilot_dataset/eval/run_eval.py report --name my-run                     # writes eval/EVAL_REPORT.md from Langfuse
+python3 -m unittest pa_copilot_dataset/eval/tests/test_eval.py                       # offline tests of the eval code
+```
+
+`setup` connects Langfuse to Gemini (your `GOOGLE_API_KEY`, stored encrypted in Langfuse), creates the datasets
+(`preauth-cases`: question + labelled answer, expected retrieval and reference reasoning; `preauth-retrieval`; `preauth-traces`),
+the score configs, and **3 LLM judges** that Langfuse runs on every experiment item.
+
+*Metrics.* Code metrics (computed by the runner and posted as Langfuse scores): policy / recommendation / criterion-status
+correctness, evidence recall, missing information, citation validity, schema, injection flagged and not obeyed, and the Qdrant
+retrieval metrics read from the real tool calls in the trace (`policy_retrieved_correct`, `policy_filters_correct`,
+`decoy_policy_not_applied`, `notes_recall_qdrant`, `notes_precision_qdrant`). Judge metrics (run inside Langfuse):
+`reviewer_summary_groundedness`, `decision_support_boundary`, `reasoning_quality_vs_expected` (1-5). Latency, tokens and cost come from the trace.
+
+*Where to click in Langfuse.* **Datasets** (items with expected output) > **Experiments** (one row per run; select two to compare)
+> open an item to see the whole agent trace, the code scores and each judge's written reasoning. **Evaluators** shows the 3 judges and
+their rules; **Scores** lists every metric. Judges can fail on free-tier quota; the judge model is `gemini-3.5-flash-lite`
+(override with `JUDGE_MODEL`), kept different from the app's primary model so they do not compete for the same quota.
+
+*Sampling and existing traces.* `--sample N --seed S` picks a random sample of dataset items. `replay` samples past adjudications from
+Langfuse, links them as dataset items (`sourceTraceId`), re-scores them from the stored trace and sends them as an experiment so the judges
+run on them too (Langfuse rules only evaluate incoming data, hence the replay). For live traffic you can instead set a rule's sampling
+fraction in Langfuse (Evaluators > Rules).
 
 ## Logins
 
@@ -211,10 +277,10 @@ rm gateway/.env gateway/.env.langfuse adk_copilot/.env ingestion_retriever/.env 
 |---|---|
 | `install.py` | The installer. It also starts everything and checks for problems |
 | `docs/architecture/` | The architecture diagram (draw.io and PNG) |
-| `pa_copilot_dataset/` | The synthetic data: SQLite database, policies, notes, health-record files, schema (`schema.dbml`) and test cases |
-| `ingestion_retriever/` | Ingestion into Qdrant, and the two MCP servers (Qdrant and SQLite) |
+| `pa_copilot_dataset/` | The synthetic data: SQLite database, policies, notes, health-record files, schema (`schema.dbml`) and test cases. `eval/` holds the labelled cases and the Langfuse evaluation runner |
+| `ingestion_retriever/` | Ingestion into Qdrant, and the three MCP servers (Qdrant, SQLite and Review) |
 | `gateway/` | LiteLLM settings (routing, backup models, semantic cache, MCP and agent gateway) and the Langfuse stack; `lens/` |
-| `adk_copilot/` | The ADK agent team (`agents/preauth/`), the AG-UI server and the script that loads prompts |
+| `adk_copilot/` | The ADK agent team (`agents/preauth/`, including the checks in `validate.py` and the A2UI screens in `a2ui_catalog.py`), the AG-UI server, unit tests (`tests/`) and the script that loads prompts |
 | `mem0/` | The long-term memory service |
 | `copilotkit_ui/` | The web app (Next.js and CopilotKit) |
 | `synthea/` | A copy of Synthea, used only to rebuild the synthetic patients |
@@ -234,6 +300,8 @@ This is a **local demo setup**. It is open on purpose:
 - The MCP gateway is open to any program on your computer (`allow_all_keys: true` in `gateway/litellm/config.yaml`).
 - The AG-UI endpoint accepts requests from any website address (CORS). The Groq connection does not check
   TLS certificates (`ssl_verify: false`), so it works behind a TLS-intercepting proxy.
+- The Review MCP uses the same bearer token as the other MCP servers. The reviewer name is fixed (`reviewer`); there is no sign-in.
+- `run_eval.py setup` stores your Google API key (encrypted) in Langfuse so its judges can call Gemini.
 - The semantic cache runs **only when a request asks for it**. Agent calls skip it, because their long, similar
   prompts could get a wrong saved answer.
 

@@ -153,7 +153,7 @@ def wait_http(url: str, timeout: int = 120, any_response: bool = False, headers:
 # --------------------------------------------------------------------------------------- the stack
 # (name, compose dir, optional?, health checks [(label, url, any_response)])
 STEPS = [
-    ("ingestion + MCP servers", "ingestion_retriever", False, [("Qdrant MCP", "http://localhost:8100/mcp", True), ("SQLite MCP", "http://localhost:8101/mcp", True)]),
+    ("ingestion + MCP servers", "ingestion_retriever", False, [("Qdrant MCP", "http://localhost:8100/mcp", True), ("SQLite MCP", "http://localhost:8101/mcp", True), ("Review MCP", "http://localhost:8102/mcp", True)]),
     ("gateway (LiteLLM + Langfuse)", "gateway", False, [("LiteLLM", "http://localhost:4000/health/readiness", False), ("Langfuse", "http://localhost:3000/api/public/health", False)]),
     ("Lens (optional trace UI)", "gateway/lens", True, [("Lens", "http://localhost:4318/", True)]),
     ("mem0 memory service", "mem0", False, [("mem0", "http://localhost:8200/health", False)]),
@@ -176,7 +176,7 @@ TABS = [
 PORTS = {3000: ("Langfuse", "langfuse-web"), 3100: ("CopilotKit UI", "copilotkit_ui"), 4000: ("LiteLLM", "litellm"),
          4318: ("Lens", "lens"), 6333: ("Qdrant", "qdrant"), 6334: ("Qdrant gRPC", "qdrant"), 8000: ("ADK web", "adk"),
          8001: ("A2A server", "adk"), 8002: ("AG-UI endpoint", "adk"), 8100: ("Qdrant MCP", "mcp"),
-         8101: ("SQLite MCP", "mcp"), 8200: ("mem0", "mem0")}
+         8101: ("SQLite MCP", "mcp"), 8102: ("Review MCP", "mcp"), 8200: ("mem0", "mem0")}
 
 # config files: target, template
 ENV_FILES = {
