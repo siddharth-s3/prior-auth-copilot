@@ -10,6 +10,14 @@ The recommendation is one of: `MEETS_CRITERIA`, `MORE_INFORMATION_NEEDED`,
 All patient data is **synthetic** (made up). This is a demo system for learning and testing. It is not ready for
 real use (see [Security notes](#security-notes)).
 
+## Demo video
+
+[![Watch the demo](docs/demo-thumbnail.jpg)](https://github.com/siddharth-s3/prior-auth-copilot/raw/main/docs/demo-video.mp4)
+
+Click the thumbnail to watch the 24-minute demo. (It opens the video stream in a new browser tab —
+GitHub does not inline-play repo files; your browser plays the MP4 directly. If a GitHub notice page
+appears instead, the companion link under *docs/demo-video.mp4* on the file page works too.)
+
 ## Highlights
 
 - **Always-on ingestion**
